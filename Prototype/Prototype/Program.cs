@@ -9,6 +9,13 @@ namespace Prototype
     internal class Program
     {
 
+        internal struct Matrix
+        {
+            public int Rows;
+            public int Columns;
+            public int[,] Values;
+        }
+
         public static void Menu()
         {
             Console.ForegroundColor = ConsoleColor.White;
@@ -52,7 +59,7 @@ namespace Prototype
             }
         }
 
-        public static int[,] InsertOrCreateMenu()
+        public static Matrix InsertOrCreateMenu()
         {
             Console.Write($@"1. Insert
 2. Create
@@ -71,10 +78,10 @@ namespace Prototype
                     break;
             }
             //Only Troubleshooting (need to fix recursion issue otherwise it will keep running and return null at the end)
-            return null;
+            return new Matrix();
         }
 
-        public static int[,] InsertMatrix()
+        public static Matrix InsertMatrix()
         {
             Console.Clear();
             Console.WriteLine("Please enter the matrix dimensions:");
@@ -83,7 +90,7 @@ namespace Prototype
             Console.Write("Columns: ");
             int columns = int.Parse(Console.ReadLine());
 
-            int[,] matrix = new int[rows, columns];
+            int[,] values = new int[rows, columns];
 
             Console.WriteLine("Please enter the matrix elements:");
 
@@ -92,17 +99,17 @@ namespace Prototype
                 for (int j = 0; j < columns; j++)
                 {
                     Console.Write($"Element[{i},{j}]: ");
-                    matrix[i, j] = int.Parse(Console.ReadLine());
+                    values[i, j] = int.Parse(Console.ReadLine());
                 }
             }
 
             Console.WriteLine("Matrix inserted successfully.");
-            //Write matrix
             Console.ReadKey();
-            return matrix;
+
+            return new Matrix { Rows = rows, Columns = columns, Values = values };
         }
 
-        public static int[,] CreateMatrix()
+        public static Matrix CreateMatrix()
         {
             Console.Clear();
             Console.WriteLine("Please enter the matrix dimensions:");
@@ -112,35 +119,58 @@ namespace Prototype
             int columns = int.Parse(Console.ReadLine());
 
             Random random = new Random();
-            int[,] matrix = new int[rows, columns];
+            int[,] values = new int[rows, columns];
 
             Console.WriteLine("Creating matrix...");
             for (int i = 0; i < rows; i++)
             {
                 for (int j = 0; j < columns; j++)
                 {
-                    matrix[i, j] = random.Next(10);
+                    values[i, j] = random.Next(10);
                 }
             }
 
             Console.WriteLine("Matrix created successfully.");
-            //Write Matrix
             Console.ReadKey();
-            return matrix;
+
+            return new Matrix { Rows = rows, Columns = columns, Values = values };
         }
 
         public static void Addition()
         {
-            int[,] matrixA = InsertOrCreateMenu();
+            Matrix matrixA = InsertOrCreateMenu();
             //Console Writing for checking
-            foreach (int i in matrixA)
+            foreach (int i in matrixA.Values)
+            {
+                Console.Write(i + " ");
+            }
+            Matrix matrixB = InsertOrCreateMenu();
+            //Console Writing for checking
+            foreach (int i in matrixB.Values)
             {
                 Console.Write(i + " ");
             }
 
+
+            //Add Check for dimensions
+
+
+            int[,] values = new int[matrixA.Rows, matrixA.Columns];
+
             Console.WriteLine("Performing Addition...");
-            // Add addition logic here
+            for (int i = 0; i < matrixA.Rows; i++)
+            {
+                for (int j = 0; j < matrixA.Columns; j++)
+                {
+                    values[i, j] = matrixA.Values[i, j] + matrixB.Values[i, j];
+                }
+            }
             Console.WriteLine("Addition complete.");
+            //Console Writing for checking
+            foreach (int i in values)
+            {
+                Console.Write(i + " ");
+            }
 
             Console.ReadKey();
             Console.Clear();
@@ -149,16 +179,39 @@ namespace Prototype
 
         public static void Subtraction()
         {
-            int[,] matrixA = InsertOrCreateMenu();
+            Matrix matrixA = InsertOrCreateMenu();
             //Console Writing for checking
-            foreach (int i in matrixA)
+            foreach (int i in matrixA.Values)
+            {
+                Console.Write(i + " ");
+            }
+            Matrix matrixB = InsertOrCreateMenu();
+            //Console Writing for checking
+            foreach (int i in matrixB.Values)
             {
                 Console.Write(i + " ");
             }
 
+
+            //Add Check for dimensions
+
+
+            int[,] values = new int[matrixA.Rows, matrixA.Columns];
+
             Console.WriteLine("Performing Subtraction...");
-            // Add subtraction logic here
+            for (int i = 0; i < matrixA.Rows; i++)
+            {
+                for (int j = 0; j < matrixA.Columns; j++)
+                {
+                    values[i, j] = matrixA.Values[i, j] - matrixB.Values[i, j];
+                }
+            }
             Console.WriteLine("Subtraction complete.");
+            //Console Writing for checking
+            foreach (int i in values)
+            {
+                Console.Write(i + " ");
+            }
 
             Console.ReadKey();
             Console.Clear();
@@ -167,9 +220,15 @@ namespace Prototype
 
         public static void Multiplication()
         {
-            int[,] matrixA = InsertOrCreateMenu();
+            Matrix matrixA = InsertOrCreateMenu();
             //Console Writing for checking
-            foreach (int i in matrixA)
+            foreach (int i in matrixA.Values)
+            {
+                Console.Write(i + " ");
+            }
+            Matrix matrixB = InsertOrCreateMenu();
+            //Console Writing for checking
+            foreach (int i in matrixB.Values)
             {
                 Console.Write(i + " ");
             }
