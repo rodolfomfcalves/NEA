@@ -1,0 +1,6 @@
+D:\Computer Science\GitHub\NEA\Prototype\Prototype\bin\Debug\Prototype.exe
+D:\Computer Science\GitHub\NEA\Prototype\Prototype\bin\Debug\Prototype.pdb
+D:\Computer Science\GitHub\NEA\Prototype\Prototype\obj\Debug\Prototype.csproj.AssemblyReference.cache
+D:\Computer Science\GitHub\NEA\Prototype\Prototype\obj\Debug\Prototype.csproj.CoreCompileInputs.cache
+D:\Computer Science\GitHub\NEA\Prototype\Prototype\obj\Debug\Prototype.exe
+D:\Computer Science\GitHub\NEA\Prototype\Prototype\obj\Debug\Prototype.pdb
