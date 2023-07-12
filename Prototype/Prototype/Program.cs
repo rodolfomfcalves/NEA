@@ -34,8 +34,17 @@ namespace Prototype
 3. Multiplication
 4. Quit
 ");
-            //Add verification of input
-            int choice = int.Parse(Console.ReadLine());
+            //Verification of input
+            int choice;
+            while (!int.TryParse(Console.ReadLine(), out choice))
+            {
+                Console.Clear();
+                Console.WriteLine("Invalid choice. Please try again.");
+                Console.ReadKey();
+                Console.Clear();
+                Menu();
+            }
+
             Console.Clear();
             switch (choice)
             {
@@ -52,8 +61,9 @@ namespace Prototype
                     Environment.Exit(0);
                     break;
                 default:
-                    Console.Clear();
                     Console.WriteLine("Invalid choice. Please try again.");
+                    Console.ReadKey();
+                    Console.Clear();
                     Menu();
                     break;
             }
@@ -64,7 +74,16 @@ namespace Prototype
             Console.Write($@"1. Insert
 2. Create
 ");
-            int choice = int.Parse(Console.ReadLine());
+            //Verification of input
+            int choice;
+            while (!int.TryParse(Console.ReadLine(), out choice))
+            {
+                Console.Clear();
+                Console.WriteLine("Invalid choice. Please try again.");
+                Console.ReadKey();
+                Console.Clear();
+                InsertOrCreateMenu();
+            }
             switch (choice)
             {
                 case 1:
@@ -74,11 +93,8 @@ namespace Prototype
                 default:
                     Console.Clear();
                     Console.WriteLine("Invalid choice. Please try again.");
-                    InsertOrCreateMenu();
-                    break;
+                    return InsertOrCreateMenu();
             }
-            //Only Troubleshooting (need to fix recursion issue otherwise it will keep running and return null at the end)
-            return new Matrix();
         }
 
         public static Matrix InsertMatrix()
@@ -86,9 +102,19 @@ namespace Prototype
             Console.Clear();
             Console.WriteLine("Please enter the matrix dimensions:");
             Console.Write("Rows: ");
-            int rows = int.Parse(Console.ReadLine());
+            int rows;
+            while (!int.TryParse(Console.ReadLine(), out rows) || rows <= 0)
+            {
+                Console.WriteLine("Invalid input. Please enter a positive integer.");
+                Console.Write("Rows: ");
+            }
             Console.Write("Columns: ");
-            int columns = int.Parse(Console.ReadLine());
+            int columns;
+            while (!int.TryParse(Console.ReadLine(), out columns) || columns <= 0)
+            {
+                Console.WriteLine("Invalid input. Please enter a positive integer.");
+                Console.Write("Columns: ");
+            }
 
             int[,] values = new int[rows, columns];
 
@@ -99,8 +125,27 @@ namespace Prototype
                 for (int j = 0; j < columns; j++)
                 {
                     Console.Write($"Element[{i},{j}]: ");
-                    values[i, j] = int.Parse(Console.ReadLine());
+                    while (!int.TryParse(Console.ReadLine(), out values[i, j]))
+                    {
+                        Console.WriteLine("Invalid input. Please enter an integer.");
+                        Console.Write($"Element[{i},{j}]: ");
+                    }
                 }
+            }
+
+            Console.WriteLine("Matrix:");
+            DisplayMatrix(new Matrix { Rows = rows, Columns = columns, Values = values });
+
+            Console.WriteLine("Is this the matrix you want? (Y/N)");
+            char confirmation;
+            while (!char.TryParse(Console.ReadLine(), out confirmation) || (confirmation != 'Y' && confirmation != 'N'))
+            {
+                Console.WriteLine("Invalid input. Please enter 'Y' or 'N'.");
+            }
+
+            if (confirmation == 'N')
+            {
+                return InsertMatrix();
             }
 
             Console.WriteLine("Matrix inserted successfully.");
@@ -114,9 +159,19 @@ namespace Prototype
             Console.Clear();
             Console.WriteLine("Please enter the matrix dimensions:");
             Console.Write("Rows: ");
-            int rows = int.Parse(Console.ReadLine());
+            int rows;
+            while (!int.TryParse(Console.ReadLine(), out rows) || rows <= 0)
+            {
+                Console.WriteLine("Invalid input. Please enter a positive integer.");
+                Console.Write("Rows: ");
+            }
             Console.Write("Columns: ");
-            int columns = int.Parse(Console.ReadLine());
+            int columns;
+            while (!int.TryParse(Console.ReadLine(), out columns) || columns <= 0)
+            {
+                Console.WriteLine("Invalid input. Please enter a positive integer.");
+                Console.Write("Columns: ");
+            }
 
             Random random = new Random();
             int[,] values = new int[rows, columns];
@@ -130,30 +185,61 @@ namespace Prototype
                 }
             }
 
+            Console.WriteLine("Matrix:");
+            DisplayMatrix(new Matrix { Rows = rows, Columns = columns, Values = values });
+
+            Console.WriteLine("Is this the matrix you want? (Y/N)");
+            char confirmation;
+            while (!char.TryParse(Console.ReadLine(), out confirmation) || (confirmation != 'Y' && confirmation != 'N'))
+            {
+                Console.WriteLine("Invalid input. Please enter 'Y' or 'N'.");
+            }
+
+            if (confirmation == 'N')
+            {
+                return CreateMatrix();
+            }
+
             Console.WriteLine("Matrix created successfully.");
             Console.ReadKey();
 
             return new Matrix { Rows = rows, Columns = columns, Values = values };
         }
 
+        public static void DisplayMatrix(Matrix matrix)
+        {
+            for (int i = 0; i < matrix.Rows; i++)
+            {
+                for (int j = 0; j < matrix.Columns; j++)
+                {
+                    Console.Write($"{matrix.Values[i, j],4}");
+                }
+                Console.WriteLine();
+            }
+        }
+
         public static void Addition()
         {
             Matrix matrixA = InsertOrCreateMenu();
-            //Console Writing for checking
-            foreach (int i in matrixA.Values)
-            {
-                Console.Write(i + " ");
-            }
+
+            Console.WriteLine("Matrix A:");
+            DisplayMatrix(matrixA);
+
             Matrix matrixB = InsertOrCreateMenu();
-            //Console Writing for checking
-            foreach (int i in matrixB.Values)
+
+            Console.WriteLine("Matrix B:");
+            DisplayMatrix(matrixB);
+
+
+            //Check for dimensions
+            if (matrixA.Columns != matrixB.Columns || matrixA.Rows != matrixB.Rows)
             {
-                Console.Write(i + " ");
+                Console.WriteLine("Error: Incompatible matrix dimensions for addition.");
+                Console.ReadKey();
+                Console.Clear();
+                Menu();
+                return;
             }
-
-
-            //Add Check for dimensions
-
 
             int[,] values = new int[matrixA.Rows, matrixA.Columns];
 
@@ -166,11 +252,16 @@ namespace Prototype
                 }
             }
             Console.WriteLine("Addition complete.");
-            //Console Writing for checking
-            foreach (int i in values)
-            {
-                Console.Write(i + " ");
-            }
+
+            Matrix matrix = new Matrix { Rows = matrixA.Rows, Columns = matrixA.Columns, Values = values };
+
+
+            Console.WriteLine("Matrix A:");
+            DisplayMatrix(matrixA);
+            Console.WriteLine("Matrix B:");
+            DisplayMatrix(matrixB);
+            Console.WriteLine("Final Matrix:");
+            DisplayMatrix(matrix);
 
             Console.ReadKey();
             Console.Clear();
@@ -180,21 +271,25 @@ namespace Prototype
         public static void Subtraction()
         {
             Matrix matrixA = InsertOrCreateMenu();
-            //Console Writing for checking
-            foreach (int i in matrixA.Values)
-            {
-                Console.Write(i + " ");
-            }
+
+            Console.WriteLine("Matrix A:");
+            DisplayMatrix(matrixA);
+
             Matrix matrixB = InsertOrCreateMenu();
-            //Console Writing for checking
-            foreach (int i in matrixB.Values)
+
+            Console.WriteLine("Matrix B:");
+            DisplayMatrix(matrixB);
+
+
+            //Check for dimensions
+            if (matrixA.Columns != matrixB.Columns || matrixA.Rows != matrixB.Rows)
             {
-                Console.Write(i + " ");
+                Console.WriteLine("Error: Incompatible matrix dimensions for subtraction.");
+                Console.ReadKey();
+                Console.Clear();
+                Menu();
+                return;
             }
-
-
-            //Add Check for dimensions
-
 
             int[,] values = new int[matrixA.Rows, matrixA.Columns];
 
@@ -207,11 +302,15 @@ namespace Prototype
                 }
             }
             Console.WriteLine("Subtraction complete.");
-            //Console Writing for checking
-            foreach (int i in values)
-            {
-                Console.Write(i + " ");
-            }
+
+            Matrix matrix = new Matrix { Rows = matrixA.Rows, Columns = matrixA.Columns, Values = values };
+
+            Console.WriteLine("Matrix A:");
+            DisplayMatrix(matrixA);
+            Console.WriteLine("Matrix B:");
+            DisplayMatrix(matrixB);
+            Console.WriteLine("Final Matrix:");
+            DisplayMatrix(matrix);
 
             Console.ReadKey();
             Console.Clear();
@@ -221,21 +320,50 @@ namespace Prototype
         public static void Multiplication()
         {
             Matrix matrixA = InsertOrCreateMenu();
-            //Console Writing for checking
-            foreach (int i in matrixA.Values)
-            {
-                Console.Write(i + " ");
-            }
+
+            Console.WriteLine("Matrix A:");
+            DisplayMatrix(matrixA);
+
             Matrix matrixB = InsertOrCreateMenu();
-            //Console Writing for checking
-            foreach (int i in matrixB.Values)
+
+            Console.WriteLine("Matrix B:");
+            DisplayMatrix(matrixB);
+
+            // Check if the number of columns in matrixA matches the number of rows in matrixB
+            if (matrixA.Columns != matrixB.Rows)
             {
-                Console.Write(i + " ");
+                Console.WriteLine("Error: Incompatible matrix dimensions for multiplication.");
+                Console.ReadKey();
+                Console.Clear();
+                Menu();
+                return;
             }
 
+            int[,] values = new int[matrixA.Rows, matrixB.Columns];
+
             Console.WriteLine("Performing Multiplication...");
-            // Add multiplication logic here
+            for (int i = 0; i < matrixA.Rows; i++)
+            {
+                for (int j = 0; j < matrixB.Columns; j++)
+                {
+                    int sum = 0;
+                    for (int k = 0; k < matrixA.Columns; k++)
+                    {
+                        sum += matrixA.Values[i, k] * matrixB.Values[k, j];
+                    }
+                    values[i, j] = sum;
+                }
+            }
             Console.WriteLine("Multiplication complete.");
+
+            Matrix matrix = new Matrix { Rows = matrixA.Rows, Columns = matrixB.Columns, Values = values };
+
+            Console.WriteLine("Matrix A:");
+            DisplayMatrix(matrixA);
+            Console.WriteLine("Matrix B:");
+            DisplayMatrix(matrixB);
+            Console.WriteLine("Final Matrix:");
+            DisplayMatrix(matrix);
 
             Console.ReadKey();
             Console.Clear();
